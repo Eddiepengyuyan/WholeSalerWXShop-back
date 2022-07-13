@@ -5,11 +5,20 @@ spring:
   name: pifaShop
 #  数据库配置
   datasource:
+#    MySQL数据库配置信息
+
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 #    url: jdbc:mysql://localhost:3306/mybatis_plus?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai
 #    username: root
 #    password: 12345678
+
+#   SQL server数据库配置信息
+
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://localhost:1433;databaseName=demo01
+    url: jdbc:sqlserver://localhost:1433;databaseName=PifaShop;encrypt=false
     username: sa
     password: 12345678
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

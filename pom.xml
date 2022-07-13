@@ -50,6 +50,7 @@
             <artifactId>mssql-jdbc</artifactId>
             <version>10.2.0.jre8</version>
         </dependency>
+
         <!-- lombok 简化set get toString -->
         <dependency>
             <groupId>org.projectlombok</groupId>
