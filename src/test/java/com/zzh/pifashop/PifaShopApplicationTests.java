@@ -2,15 +2,12 @@ package com.zzh.pifashop;
 
 import com.zzh.pifashop.domain.Items;
 import com.zzh.pifashop.mapper.IItemsMapper;
-import org.junit.Assert;
+import com.zzh.pifashop.serviceImp.ItemsServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.List;
 
 @SpringBootTest
@@ -20,8 +17,11 @@ class PifaShopApplicationTests {
     void contextLoads() {
     }
 
-//    @Autowired
-    @Resource
+    /**
+     * Mapper测试
+     */
+    @Autowired
+//    @Resource
     private IItemsMapper iItemsMapper;
     @Test
     void sqlLinkTest(){
@@ -30,5 +30,22 @@ class PifaShopApplicationTests {
 //        Assert.assertEquals(5, itemList.size());
         itemList.forEach(System.out::println);
     }
+
+    /**
+     * Service测试
+     */
+    @Resource
+    private ItemsServiceImpl itemsServiceImp;
+
+    @Test
+    void addItemTest(){
+
+    }
+
+    @Test
+    void getAllItemsTest(){
+
+    }
+
 
 }
