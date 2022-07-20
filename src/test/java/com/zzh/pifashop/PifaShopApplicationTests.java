@@ -1,5 +1,6 @@
 package com.zzh.pifashop;
 
+import com.alibaba.fastjson.JSON;
 import com.zzh.pifashop.domain.Items;
 import com.zzh.pifashop.mapper.IItemsMapper;
 import com.zzh.pifashop.serviceImp.ItemsServiceImpl;
@@ -44,7 +45,10 @@ class PifaShopApplicationTests {
 
     @Test
     void getAllItemsTest(){
-
+        List<Items> items = itemsServiceImp.list(null);
+        String json = JSON.toJSONString(items);
+//        items.forEach(System.out::println);
+        System.out.println(json);
     }
 
 

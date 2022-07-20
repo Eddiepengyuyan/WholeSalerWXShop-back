@@ -4,10 +4,17 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zzh.pifashop.domain.Items;
 import com.zzh.pifashop.mapper.IItemsMapper;
 import com.zzh.pifashop.service.IItemsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service("ItemService")
+@Service("itemService")
 public class ItemsServiceImpl extends ServiceImpl<IItemsMapper, Items> implements IItemsService {
+    @Autowired
+    IItemsMapper mapper;
+    @Override
+    public void updateState(int itemid) {
+        mapper.updateState(itemid);
+    }
 //
 //    @Resource
 //    private IItemsMapper iItemsMapper;

@@ -11,10 +11,23 @@ public class Orders {
     private int userid;
 //    商品总价
     private double totalPrice ;
-//    订单状态
+//    订单状态 0 未 1 已
     private int state;
     private String address;
     private String phoneNumber;
+
+    public Orders(int userid) {
+        this.userid = userid;
+    }
+
+    public Orders(int userid, double totalPrice, String address, String phoneNumber) {
+        this.userid = userid;
+        this.totalPrice = totalPrice;
+        this.state = 0;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+    }
+
 
 //    public int getId() {
 //        return id;
