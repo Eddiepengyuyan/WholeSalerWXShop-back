@@ -35,6 +35,16 @@ class ItemsControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
+    public String responseString(String url) throws Exception {
+        return mockMvc.perform(MockMvcRequestBuilders.post(url)
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+//                        .content(json)
+                ).andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn().getResponse().getContentAsString();
+    }
+
     @Test
     void itemList() throws Exception {
         setUp();

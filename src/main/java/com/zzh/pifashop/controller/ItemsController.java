@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 @RestController
 @EnableAutoConfiguration
@@ -74,8 +77,22 @@ public class ItemsController {
     @RequestMapping("/takedown")
     public String takedown(HttpServletRequest request,
                            @RequestParam int itemid){
-        // TODO: 2022/7/19  构造器，完成sql
         iItemsService.updateState(itemid);
+        return "200";
+    }
+
+    @RequestMapping("editItem")
+    public String editItem(HttpServletRequest request,
+                           @RequestParam int itemid,
+                           @RequestParam String name,
+                           @RequestParam double price,
+                           @RequestParam String url){
+        Items items = new Items(itemid,name, price,0, url);
+        try {
+            iItemsService.updateById(items);
+        }catch (Exception e){
+            return e.toString();
+        }
         return "200";
     }
 

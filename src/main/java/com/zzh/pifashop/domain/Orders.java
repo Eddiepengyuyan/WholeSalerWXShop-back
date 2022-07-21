@@ -1,12 +1,17 @@
 package com.zzh.pifashop.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Orders {
     //订单属性
     //订单id
     private int orderid;
+    private long orderNum;
     //顾客id
     private int userid;
 //    商品总价
@@ -15,9 +20,11 @@ public class Orders {
     private int state;
     private String address;
     private String phoneNumber;
+    private String time;
 
-    public Orders(int userid) {
+    public Orders(int userid, long orderNum) {
         this.userid = userid;
+        this.orderNum = orderNum;
     }
 
     public Orders(int userid, double totalPrice, String address, String phoneNumber) {

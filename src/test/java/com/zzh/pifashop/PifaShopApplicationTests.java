@@ -1,8 +1,11 @@
 package com.zzh.pifashop;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zzh.pifashop.domain.Items;
+import com.zzh.pifashop.domain.Orders;
 import com.zzh.pifashop.mapper.IItemsMapper;
+import com.zzh.pifashop.service.IOrdersService;
 import com.zzh.pifashop.serviceImp.ItemsServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +41,9 @@ class PifaShopApplicationTests {
     @Resource
     private ItemsServiceImpl itemsServiceImp;
 
+    @Autowired
+    private IOrdersService ordersService;
+
     @Test
     void addItemTest(){
 
@@ -51,5 +57,11 @@ class PifaShopApplicationTests {
         System.out.println(json);
     }
 
-
+    @Test
+    void orderList() {
+        QueryWrapper<Orders> ordersQueryWrapper = new QueryWrapper<>();
+        ordersQueryWrapper.eq("userid",2);
+        List<Orders> list = ordersService.list(ordersQueryWrapper);
+        list.forEach(System.out::println);
+    }
 }
