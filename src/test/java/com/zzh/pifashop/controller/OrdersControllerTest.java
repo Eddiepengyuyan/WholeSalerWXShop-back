@@ -39,4 +39,9 @@ class OrdersControllerTest {
         String responseString = responseString("/orderList?userid=1");
         System.out.println(responseString);
     }
+
+    @Test
+    void submitOrder(){
+        setup();
+    }
 }

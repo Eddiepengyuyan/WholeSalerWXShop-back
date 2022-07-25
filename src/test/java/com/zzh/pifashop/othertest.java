@@ -11,6 +11,7 @@ public class othertest {
         String time = sdfTime.format(new Date());
         System.out.println(time);
         time = time.replaceAll("[[\\s-:punct:]]", "");
+        System.out.println(time);
         Random rm = new Random();
         int random = (int)(rm.nextDouble()*Math.pow(10,rm.nextInt(5)+5)%1000);
         System.out.println(random);

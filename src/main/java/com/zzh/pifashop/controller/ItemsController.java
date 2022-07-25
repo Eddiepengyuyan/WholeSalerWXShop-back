@@ -1,6 +1,8 @@
 package com.zzh.pifashop.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zzh.pifashop.domain.Items;
 import com.zzh.pifashop.service.IItemsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +79,36 @@ public class ItemsController {
     @RequestMapping("/takedown")
     public String takedown(HttpServletRequest request,
                            @RequestParam int itemid){
+        UpdateWrapper<Items> uw = new UpdateWrapper<>();
+        uw.eq("itemid",itemid).set("state",-1);
         iItemsService.updateState(itemid);
+        return "200";
+    }
+
+    /**
+     * 下架商品列表
+     * @return
+     */
+    @RequestMapping("/takedownList")
+    public String takedownList(){
+        QueryWrapper<Items> qw = new QueryWrapper<>();
+        qw.eq("state",-1);
+        List<Items> list = iItemsService.list(qw);
+        return JSON.toJSONString(list);
+    }
+
+    /**
+     * 重新上架商品
+     * @param request
+     * @param itemid
+     * @return
+     */
+    @RequestMapping("/onshelfAgain")
+    public String onshelfAgain(HttpServletRequest request,
+                               @RequestParam int itemid){
+        UpdateWrapper<Items> uw = new UpdateWrapper<>();
+        uw.eq("itemid",itemid).set("state",0);
+        iItemsService.update(uw);
         return "200";
     }
 

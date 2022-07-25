@@ -8,4 +8,6 @@ import org.springframework.stereotype.Service;
 
 @Service("orderDetialService")
 public class OrderDetialServiceImpl extends ServiceImpl<IOrderDetailMapper, OrderDetial> implements IOrderDetailService {
+
+
 }

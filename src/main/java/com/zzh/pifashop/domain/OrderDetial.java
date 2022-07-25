@@ -5,10 +5,11 @@ import lombok.Data;
 @Data
 public class OrderDetial {
     private int orderDetialid;
-    private int orderid;
+    private long orderNum;
     private int itemid;
 //    商品数量
     private int itemNum;
 //    这个商品总价
-    private int tempPrice;
+    private double tempPrice;
+    private int isSure;
 }
