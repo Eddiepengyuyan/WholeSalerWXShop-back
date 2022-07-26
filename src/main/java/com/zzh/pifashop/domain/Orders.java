@@ -1,5 +1,7 @@
 package com.zzh.pifashop.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,8 +12,10 @@ import lombok.NoArgsConstructor;
 public class Orders {
     //订单属性
     //订单id
-    private int orderid;
+    @TableId(value = "orderid",type = IdType.AUTO)
+    private Integer orderid;
     private long orderNum;
+    private int userAddressid;
     //顾客id
     private int userid;
 //    商品总价

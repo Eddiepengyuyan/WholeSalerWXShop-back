@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Items {
     //酒水饮料的属性
-//    @TableId(value = "itemid",type = IdType.AUTO)//在自增主键的变量加上即可
-    private int itemid;
+    @TableId(value = "itemid",type = IdType.AUTO)//在自增主键的变量加上即可
+    private Integer itemid;
     private String name;
     private double price;
     private int state;

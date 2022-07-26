@@ -19,7 +19,10 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 @SpringBootTest
 class PifaShopApplicationTests {
@@ -78,20 +81,45 @@ class PifaShopApplicationTests {
         list.forEach(System.out::println);
     }
 
+
     @Test
-//    @Transactional
-//    @Rollback
+    @Transactional
+    @Rollback
     void submitOrder(){
         QueryWrapper<UserAddress> qw = new QueryWrapper<>();
         qw.eq("user_addressid",1).select("phone");
         String phone = userAddressService.list(qw).get(0).getPhone().substring(7);
-        System.out.println(phone);
-        // TODO: 2022/7/26 写一个只返回phone的sql 
-//        UpdateWrapper<OrderDetial> uw = new UpdateWrapper<>();
+//        System.out.println(phone);
+        UpdateWrapper<OrderDetial> uw = new UpdateWrapper<>();
+        long orderNum = newOrderNum(phone);
 //        long orderNum = 220725231438865131L;
-//        uw.eq("is_sure",0).set("order_num",orderNum).set("is_sure",1);
-//        orderDetailService.update(uw);
-//        List<OrderDetial> ods = orderDetailService.list();
-//        ods.forEach(System.out::println);
+        uw.eq("is_sure",0).set("order_num",orderNum).set("is_sure",1);
+        orderDetailService.update(uw);
+        List<OrderDetial> ods = orderDetailService.list();
+        ods.forEach(System.out::println);
     }
+
+    @Test
+    @Transactional
+    @Rollback
+    void addOrderItem(){
+    }
+
+
+    /**
+     * 生成订单号的算法
+     */
+    private long newOrderNum(String phonetail){
+        SimpleDateFormat sdfTime = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
+//        System.out.println("时间戳："+sdfTime.format(new Date()));
+        String time = sdfTime.format(new Date());
+        time = time.replaceAll("[[\\s-:punct:]]", "");
+        Random rm = new Random();
+        int random = (int)(rm.nextDouble()*Math.pow(10,rm.nextInt(5)+5)%1000);
+        String temp = time + random + phonetail;
+        long orderNum = Long.parseLong(temp) ;
+        return orderNum;
+    }
+
+
 }

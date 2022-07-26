@@ -24,6 +24,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * @Title: 订单类的controller
+ * @Description:
+ * @Author: 22505
+ * @Date: 2022/7/26
+ * @Version: 1.0
+*/
 @RestController
 @EnableAutoConfiguration
 public class OrdersController {
@@ -35,7 +42,27 @@ public class OrdersController {
     @Autowired
     IUserAddressService userAddressService;
 
+    /**
+     * 获取一个用户未完成的订单
+     * @param request
+     * @param userid
+     * @return
+     */
+    @RequestMapping("/unfinishOrderList")
+    public String unfinishOrderList(HttpServletRequest request,
+                                    @RequestParam int userid){
+        QueryWrapper<Orders> qw = new QueryWrapper<>();
+        qw.eq("userid",userid).eq("state",0);
+        List<Orders> list = ordersService.list(qw);
+        return JSON.toJSONString(list);
+    }
 
+    /**
+     * 获取一个用户的所有订单
+     * @param request
+     * @param userid
+     * @return
+     */
     @RequestMapping("/orderList")
     public String orderList(HttpServletRequest request,
                             @RequestParam int userid){
@@ -69,34 +96,34 @@ public class OrdersController {
      * @param useraddressid
      * @param userid
      * @param totalprice
-     * @param time
      * @return
      */
     @RequestMapping("/submitOrder")
     public String submitOrder(HttpServletRequest request,
                                 @RequestParam int useraddressid,
                                 @RequestParam int userid,
-                                @RequestParam double totalprice,
-                                @RequestParam String time){
+                                @RequestParam double totalprice){
+//        1.更新orderDetial的信息
         QueryWrapper<UserAddress> qw = new QueryWrapper<>();
         qw.eq("user_addressid",useraddressid).select("phone");
-        String phone = userAddressService.list(qw).toString();
-
-
-
+//        获取手机号后四位
+        String phone = userAddressService.list(qw).get(0).getPhone().substring(7);
 //        生成订单号。
-        long orderNum = newOrderNum();
-        // TODO: 2022/7/21 获取用户手机号后4位
+        long orderNum = newOrderNum(phone);
 
 //        List<OrderDetial> ods = orderDetailService.list(qw);
-        UpdateWrapper<OrderDetial> uw = new UpdateWrapper<>();
-        uw.eq("is_sure",0).set("order_num",orderNum).set("is_sure",1);
-        orderDetailService.update(uw);
-        // TODO: 2022/7/21 完善完成订单的代码
+        UpdateWrapper<OrderDetial> uwod = new UpdateWrapper<>();
+        uwod.eq("is_sure",0).set("order_num",orderNum).set("is_sure",1);
+        orderDetailService.update(uwod);
+//        2.然后更新order的信息
+        Orders order = new Orders();
+        order.setOrderNum(orderNum);order.setUserAddressid(useraddressid);
+        order.setUserid(userid);order.setTotalPrice(totalprice);
+        order.setTime(nowDateTime());
+        ordersService.save(order);
         return "200";
     }
 
-    // TODO: 2022/7/21 再确定一下订单流程 
     
 //    @RequestMapping("/completeOrder")
 //    public String completeOrder(HttpServletRequest request,
@@ -111,32 +138,84 @@ public class OrdersController {
 //        return "200";
 //    }
 
+    /**
+     * 添加或修改一个订单项(orderDetial)
+     * @param request
+     * @param itemid
+     * @param itemNum
+     * @param tempPrice
+     * @return
+     */
     @RequestMapping("/addOrderItem")
     public String addOrderItem(HttpServletRequest request,
+                               @RequestParam(required =false,defaultValue = "-1") int orderDetialid,
                                @RequestParam int itemid,
                                @RequestParam int itemNum,
                                @RequestParam double tempPrice){
+        UpdateWrapper<OrderDetial> uw = new UpdateWrapper<>();
         OrderDetial od = new OrderDetial();
         od.setItemid(itemid);od.setItemNum(itemNum);od.setTempPrice(tempPrice);
-        orderDetailService.save(od);
-
+        if (orderDetialid == -1 ){
+            orderDetailService.save(od);
+        }else {
+            uw.eq("order_detialid",orderDetialid);
+//            uw.set("itemid",itemid).set("item_num",itemNum).set("temp_price",tempPrice);
+            orderDetailService.saveOrUpdate(od,uw);
+        }
         return "200";
     }
+
+
+
+    /**
+     * 获取所有未完成的订单列表
+     * @return
+     */
+    @RequestMapping("/getUnfinishOrderList")
+    public String getUnfinishOrderList(){
+        QueryWrapper<Orders> qw = new QueryWrapper<>();
+        qw.eq("state",0);
+        List<Orders> ordersList = ordersService.list(qw);
+        return JSON.toJSONString(ordersList);
+    }
+
+    /**
+     *  获取所有订单列表
+     * @return
+     */
+    @RequestMapping("/getAllOrderList")
+    public String getAllOrderList(){
+        List<Orders> list = ordersService.list();
+        return JSON.toJSONString(list);
+    }
+
+
+
 
 
     /**
      * 生成订单号的算法
      */
-    private long newOrderNum(){
-        SimpleDateFormat sdfTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SS");
+    private long newOrderNum(String phonetail){
+        SimpleDateFormat sdfTime = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
 //        System.out.println("时间戳："+sdfTime.format(new Date()));
         String time = sdfTime.format(new Date());
         time = time.replaceAll("[[\\s-:punct:]]", "");
         Random rm = new Random();
         int random = (int)(rm.nextDouble()*Math.pow(10,rm.nextInt(5)+5)%1000);
-        String temp = time + random;
+        String temp = time + random + phonetail;
         long orderNum = Long.parseLong(temp) ;
         return orderNum;
+    }
+
+    /**
+     * 获取当前时间的算法
+     * @return
+     */
+    private String nowDateTime(){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = simpleDateFormat.format(new Date());
+        return time;
     }
 
 }
