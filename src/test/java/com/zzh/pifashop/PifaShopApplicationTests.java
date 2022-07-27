@@ -19,6 +19,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -105,6 +107,22 @@ class PifaShopApplicationTests {
     void addOrderItem(){
     }
 
+    private static final String PATHHEAD;
+
+    static {
+        try {
+            PATHHEAD = "http://"+InetAddress.getLocalHost().getHostAddress()+":8080/";
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void getLocalhostTest() throws UnknownHostException {
+//        InetAddress localhost = getLocalhost();
+        System.out.println(PATHHEAD);
+    }
+
 
     /**
      * 生成订单号的算法
@@ -119,6 +137,11 @@ class PifaShopApplicationTests {
         String temp = time + random + phonetail;
         long orderNum = Long.parseLong(temp) ;
         return orderNum;
+    }
+
+    private InetAddress getLocalhost() throws UnknownHostException {
+        InetAddress lh = InetAddress.getLocalHost();
+        return lh;
     }
 
 

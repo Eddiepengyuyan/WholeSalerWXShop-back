@@ -35,6 +35,7 @@ public class Test_Sql {
             System.out.println("连接失败2");
         }
     }
+
 //    public static void main(String[] args) {
 //        try{  Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 //            System.out.println("连接成功1");

@@ -53,8 +53,9 @@ class OrdersControllerTest {
     @Rollback
     void addOrderItem() throws Exception {
         setup();
-        String responseString = responseString("/addOrderItem?itemid=2&itemNum=10&tempPrice=30");
-//        String responseString = responseString("/addOrderItem?order_detialid=3&itemid=2&itemNum=20&tempPrice=60");
+//        String responseString = responseString("/addOrderItem?itemid=2&itemNum=10&tempPrice=30");
+        String responseString = responseString("/addOrderItem?orderDetialid=3&itemid=2&itemNum=20&tempPrice=60");
+
         System.out.println(responseString);
     }
 

@@ -5,13 +5,17 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zzh.pifashop.domain.Items;
 import com.zzh.pifashop.service.IItemsService;
+import jdk.nashorn.internal.objects.Global;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -24,13 +28,25 @@ public class ItemsController {
     @Autowired
     IItemsService iItemsService;
 
+    private static final String IMGPATHHEAD;
+
+    static {
+        try {
+            IMGPATHHEAD = "http://"+InetAddress.getLocalHost().getHostAddress()+":8080/";
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * 无参返回所有item的所有信息
      * @return
      */
     @RequestMapping("/itemList")
     public String itemList(){
-        List<Items> items = iItemsService.list(null);
+        QueryWrapper<Items> qw = new QueryWrapper<>();
+        qw.ne("state",-1);
+        List<Items> items = iItemsService.list(qw);
 //        items.forEach(System.out::println);
         return JSON.toJSONString(items);
     }
@@ -61,13 +77,15 @@ public class ItemsController {
                           @RequestParam String name,
                           @RequestParam double price,
                           @RequestParam String url){
+        // TODO: 2022/7/27 继续完善图片url 
+        url = IMGPATHHEAD + url;
         Items item = new Items(name, price, url);
         try {
             iItemsService.save(item);
         }catch (Exception e){
             return e.toString();
         }
-        return "200";
+        return "success";
     }
 
     /**
@@ -82,7 +100,7 @@ public class ItemsController {
         UpdateWrapper<Items> uw = new UpdateWrapper<>();
         uw.eq("itemid",itemid).set("state",-1);
         iItemsService.updateState(itemid);
-        return "200";
+        return "success";
     }
 
     /**
@@ -109,9 +127,18 @@ public class ItemsController {
         UpdateWrapper<Items> uw = new UpdateWrapper<>();
         uw.eq("itemid",itemid).set("state",0);
         iItemsService.update(uw);
-        return "200";
+        return "success";
     }
 
+    /**
+     * 编辑商品属性
+     * @param request
+     * @param itemid
+     * @param name
+     * @param price
+     * @param url
+     * @return
+     */
     @RequestMapping("editItem")
     public String editItem(HttpServletRequest request,
                            @RequestParam int itemid,
@@ -124,7 +151,14 @@ public class ItemsController {
         }catch (Exception e){
             return e.toString();
         }
-        return "200";
+        return "success";
     }
+
+
+//    private String getIMGPATHHEAD() throws Exception {
+//        InetAddress lh = InetAddress.getLocalHost();
+//        String localhost = lh.getHostAddress()+":8080";
+//        return localhost;
+//    }
 
 }

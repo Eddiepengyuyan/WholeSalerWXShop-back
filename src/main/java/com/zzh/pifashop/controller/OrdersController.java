@@ -121,7 +121,7 @@ public class OrdersController {
         order.setUserid(userid);order.setTotalPrice(totalprice);
         order.setTime(nowDateTime());
         ordersService.save(order);
-        return "200";
+        return "success";
     }
 
     
@@ -160,9 +160,24 @@ public class OrdersController {
         }else {
             uw.eq("order_detialid",orderDetialid);
 //            uw.set("itemid",itemid).set("item_num",itemNum).set("temp_price",tempPrice);
-            orderDetailService.saveOrUpdate(od,uw);
+            orderDetailService.update(od,uw);
         }
-        return "200";
+        return "success";
+    }
+
+    /**
+     * 删除一个订单项
+     * @param request
+     * @param itemid
+     * @return
+     */
+    @RequestMapping("/deleteOrderItem")
+    public String deleteOrderItem(HttpServletRequest request,
+                                  @RequestParam int itemid){
+        QueryWrapper rw = new QueryWrapper<>();
+        rw.eq("itemid",itemid);
+        orderDetailService.remove(rw);
+        return "success";
     }
 
 
@@ -189,8 +204,20 @@ public class OrdersController {
         return JSON.toJSONString(list);
     }
 
-
-
+    /**
+     * 完成订单
+     * @param request
+     * @param orderid
+     * @return
+     */
+    @RequestMapping("/completeOrder")
+    public String completeOrder(HttpServletRequest request,
+                                @RequestParam int orderid){
+        UpdateWrapper<Orders> uw = new UpdateWrapper<>();
+        uw.set("state",1).eq("orderid",orderid);
+        ordersService.update(uw);
+        return "success";
+    }
 
 
     /**
