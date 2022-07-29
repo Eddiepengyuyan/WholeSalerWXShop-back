@@ -12,8 +12,10 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
@@ -86,6 +88,39 @@ public class ItemsController {
             return e.toString();
         }
         return "success";
+    }
+
+    @RequestMapping("/uploadImg")
+    public String uploadImg(HttpServletRequest request,
+                            @RequestParam("picfile") MultipartFile picfile,
+                            @RequestParam("itemname") String itemname){
+        if (picfile.isEmpty()){
+            System.out.println("文件是空的");
+        }
+        try {
+            String type = picfile.getOriginalFilename().substring(picfile.getOriginalFilename().lastIndexOf(".")).toLowerCase();
+            String imgName = itemname + type;
+            System.out.println(imgName);
+//            System.out.println(type);
+//            File targetFile = new File("D:\\IDEA-pifaShop\\pifaShop\\src\\main\\resources\\static\\images" ,  type);
+            File targetFile = new File("D:\\IDEA-pifaShop\\pifaShop\\src\\main\\resources\\static\\images" ,  imgName);
+//            File targetFile = new File("src/main/resources/static/images" ,  type);
+            if (!targetFile.exists()) {
+                targetFile.mkdirs();
+            }
+            picfile.transferTo(targetFile);
+            return  imgName;
+        } catch (Exception e) {
+            return "上传失败";
+        }
+
+//        System.out.println("\nuploadImg被调用");
+//        String filename = picfile.getOriginalFilename()+'.'+picfile.getContentType();
+//        System.out.println(filename);
+//        String path = "src/main/resources/static/images";
+//        System.out.println(path);
+////        File realpath = new File(path,filename);
+//        return "200";
     }
 
     /**
