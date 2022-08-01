@@ -34,7 +34,8 @@ public class ItemsController {
 
     static {
         try {
-            IMGPATHHEAD = "http://"+InetAddress.getLocalHost().getHostAddress()+":8080/";
+//            IMGPATHHEAD = "http://"+InetAddress.getLocalHost().getHostAddress()+":8080/";
+            IMGPATHHEAD = InetAddress.getLocalHost()+"/image/";
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
@@ -66,21 +67,63 @@ public class ItemsController {
         return JSON.toJSONString(byId);
     }
 
+//    /**
+//     * 上架商品
+//     * @param request
+//     * @param name
+//     * @param price
+//     * @param url
+//     * @return
+//     */
+//    @RequestMapping("/addItem")
+//    public String addItem(HttpServletRequest request,
+//                          @RequestParam String name,
+//                          @RequestParam double price,
+//                          @RequestParam String url){
+//        url = IMGPATHHEAD + url;
+//        Items item = new Items(name, price, url);
+//        try {
+//            iItemsService.save(item);
+//        }catch (Exception e){
+//            return e.toString();
+//        }
+//        return "success";
+//    }
+
     /**
      * 上架商品
      * @param request
      * @param name
      * @param price
-     * @param url
+     * @param picfile
      * @return
      */
     @RequestMapping("/addItem")
     public String addItem(HttpServletRequest request,
                           @RequestParam String name,
                           @RequestParam double price,
-                          @RequestParam String url){
-        // TODO: 2022/7/27 继续完善图片url 
-        url = IMGPATHHEAD + url;
+                          @RequestParam("picfile") MultipartFile picfile){
+        String imgName;
+//        if (picfile.isEmpty()){
+//            System.out.println("文件是空的");
+//        }
+        try {
+            String type = picfile.getOriginalFilename().substring(picfile.getOriginalFilename().lastIndexOf(".")).toLowerCase();
+            imgName = name + type;
+            System.out.println(imgName);
+//            System.out.println(type);
+//            File targetFile = new File("D:\\IDEA-pifaShop\\pifaShop\\src\\main\\resources\\static\\images" ,  type);
+            File targetFile = new File("D:\\IDEA-pifaShop\\pifaShop\\src\\main\\resources\\static\\images" ,  imgName);
+//            File targetFile = new File("src/main/resources/static/images" ,  type);
+            if (!targetFile.exists()) {
+                targetFile.mkdirs();
+            }
+            picfile.transferTo(targetFile);
+//            return  imgName;
+        } catch (Exception e) {
+            return "上传失败";
+        }
+        String url = IMGPATHHEAD + imgName;
         Items item = new Items(name, price, url);
         try {
             iItemsService.save(item);
@@ -89,6 +132,50 @@ public class ItemsController {
         }
         return "success";
     }
+
+    /**
+     * 编辑商品属性
+     * @param request
+     * @param itemid
+     * @param name
+     * @param price
+     * @param picfile
+     * @return
+     */
+    @RequestMapping("editItem")
+    public String editItem(HttpServletRequest request,
+                           @RequestParam int itemid,
+                           @RequestParam String name,
+                           @RequestParam double price,
+                           @RequestParam("picfile") MultipartFile picfile){
+        String imgName;
+        try {
+            String type = picfile.getOriginalFilename().substring(picfile.getOriginalFilename().lastIndexOf(".")).toLowerCase();
+            imgName = name + type;
+            System.out.println(imgName);
+//            System.out.println(type);
+//            File targetFile = new File("D:\\IDEA-pifaShop\\pifaShop\\src\\main\\resources\\static\\images" ,  type);
+            File targetFile = new File("D:\\IDEA-pifaShop\\pifaShop\\src\\main\\resources\\static\\images" ,  imgName);
+//            File targetFile = new File("src/main/resources/static/images" ,  type);
+            if (!targetFile.exists()) {
+                targetFile.mkdirs();
+            }
+            picfile.transferTo(targetFile);
+//            return  imgName;
+        } catch (Exception e) {
+            return "上传失败";
+        }
+        String url = IMGPATHHEAD + imgName;
+        Items items = new Items(itemid,name, price,0, url);
+        try {
+            iItemsService.updateById(items);
+        }catch (Exception e){
+            return e.toString();
+        }
+        return "success";
+    }
+
+
 
     @RequestMapping("/uploadImg")
     public String uploadImg(HttpServletRequest request,
@@ -165,29 +252,7 @@ public class ItemsController {
         return "success";
     }
 
-    /**
-     * 编辑商品属性
-     * @param request
-     * @param itemid
-     * @param name
-     * @param price
-     * @param url
-     * @return
-     */
-    @RequestMapping("editItem")
-    public String editItem(HttpServletRequest request,
-                           @RequestParam int itemid,
-                           @RequestParam String name,
-                           @RequestParam double price,
-                           @RequestParam String url){
-        Items items = new Items(itemid,name, price,0, url);
-        try {
-            iItemsService.updateById(items);
-        }catch (Exception e){
-            return e.toString();
-        }
-        return "success";
-    }
+
 
 
 //    private String getIMGPATHHEAD() throws Exception {
